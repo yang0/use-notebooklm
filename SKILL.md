@@ -256,6 +256,17 @@ notebooklm status
 - 可选 `options.sourceIds`、`options.language`
 - 默认 readiness 可用 `allow-partial-ready`
 
+**⚠️ 重要：ask 的输出模式选择**
+
+| 模式 | 命令 | 适用场景 | 注意事项 |
+|------|------|----------|----------|
+| **文本模式**（推荐） | `notebooklm ask "..." -n <id>` | 内容挖掘、获取回答 | 返回完整回答文本，适合阅读和分析 |
+| **JSON 模式** | `notebooklm ask "..." -n <id> --json` | 程序化提取 citations | **只返回引用片段，不返回回答文本**，不适合内容阅读 |
+
+**渐进式挖掘时，使用文本模式获取可读的完整回答。**
+
+**⚠️ 多 notebook 上下文问题**：当 source add 成功后，notebooklm CLI 可能自动 resume 到之前操作的 notebook。后续 ask 必须显式指定 `-n <notebook-id>`，否则可能提问到错误的 notebook。
+
 ### `add-sources`
 
 要求：
@@ -345,6 +356,8 @@ notebooklm status
 
 NotebookLM 每次返回的文本量有限（通常几百到几千字）。当用户需要从视频/文档中提取结构化深度内容时，**不要一次性要求全部内容**，而是采用渐进式多轮提问：
 
+> **⚠️ 已知限制**：NotebookLM 对中文回答的编码支持不稳定，可能出现乱码。建议挖掘阶段用**英文提问**（NotebookLM 对英文处理更稳定），最终汇总输出时由编排层翻译成中文。
+
 ### 核心理念
 
 每轮提问基于前一轮结果的**反思**，而非预先规划所有问题。作为编排者，你要：
@@ -410,6 +423,41 @@ Final: 补充遗漏
 | `CSRF token not found` | 同上，确认 Chrome CDP 端口可访问 |
 | `Missing required cookies` | 确认 Chrome profile 已登录 NotebookLM，用 `--cdp-port` 重新提取 |
 | notebooklm 命令无响应 | 检查 `curl_cffi` 是否安装：`pip install curl_cffi` |
+
+## 常见问题与解决方案
+
+### 问题1：NotebookLM 对中文回答出现乱码
+
+**症状**：ask 返回的中文内容显示为乱码（如 `����`）。
+
+**根因**：NotebookLM 服务对中文字符的编码处理不稳定。
+
+**解决**：
+- 挖掘阶段使用**英文提问**，由 NotebookLM 处理英文内容
+- 最终汇总时由编排层（当前 LLM）将英文结果翻译/重写成中文
+- 或要求 NotebookLM "用中文回答" 作为 prompt 的一部分（成功率不保证）
+
+### 问题2：`notebooklm ask --json` 只返回 citations，不返回回答文本
+
+**症状**：使用 `--json` 模式后，输出只有引用片段列表，看不到 NotebookLM 的完整回答。
+
+**根因**：`--json` 模式的设计用途是程序化提取引用信息，不是用于阅读回答。
+
+**解决**：内容挖掘时使用**文本模式**（不加 `--json`），如果需要 citations 可以后续单独提取。
+
+### 问题3：ask 提问到了错误的 notebook
+
+**症状**：source add 成功后，后续的 ask 返回的内容与当前 notebook 无关。
+
+**根因**：`notebooklm` CLI 在多 notebook 场景下可能 resume 到之前的会话上下文。
+
+**解决**：**每个 ask 命令都显式指定 `-n <notebook-id>`**，不要依赖 CLI 的自动上下文恢复。
+
+### 问题4：source 状态查询返回超时或空结果
+
+**症状**：`notebooklm source add` 后查询状态没有响应。
+
+**解决**：按对账策略执行 `notebooklm source list --json --notebook <id>`，检查 source 的真实状态。如果状态为 `processing` 或 `ready`，按真实状态继续。
 
 ## 相关脚本
 
