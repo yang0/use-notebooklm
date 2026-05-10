@@ -1,0 +1,23 @@
+﻿{
+  "contractVersion": "notebooklm_request_v1",
+  "status": "READY",
+  "request": {
+    "action": "add-sources",
+    "notebookTarget": {
+      "targetMode": "existing",
+      "notebookTitle": "椋庢按浜虹兢鍟嗗搧钃濇捣"
+    },
+    "input": {
+      "sources": [
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "https://example.com/fengshui-market-notes"
+      ]
+    },
+    "options": {
+      "language": "zh_Hans",
+      "sourceReadinessMode": "require-all-ready"
+    },
+    "confirmation": {}
+  },
+  "openQuestions": []
+}

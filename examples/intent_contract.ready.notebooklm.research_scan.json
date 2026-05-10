@@ -1,0 +1,29 @@
+﻿{
+  "contractVersion": "intent_contract_v1",
+  "status": "READY",
+  "intent": {
+    "objective": "Scan the China mainland feng shui-interested audience over the last 90 days and identify products that are repeatedly discussed but not dominated by strong brands",
+    "targetSubject": "feng shui and metaphysics audience consumption",
+    "targetAudience": "China mainland consumers interested in feng shui, luck, ritual, and metaphysics-adjacent products",
+    "deliverable": "a top-10 blue-ocean product shortlist with supporting evidence",
+    "successCriteria": "the shortlist should highlight products with repeated mention signals, clear purchase intent, and fragmented brand competition",
+    "explorationAngles": [
+      "wearables",
+      "home decor",
+      "office goods",
+      "ritual products"
+    ],
+    "constraints": {
+      "language": "zh_Hans",
+      "timeWindowDays": 90
+    },
+    "mustInclude": [
+      "brand fragmentation",
+      "recent mention signals"
+    ],
+    "mustExclude": [
+      "pure belief discussion without product demand"
+    ]
+  },
+  "openQuestions": []
+}

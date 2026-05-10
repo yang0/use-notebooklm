@@ -1,0 +1,24 @@
+﻿{
+  "contractVersion": "intent_contract_v1",
+  "status": "READY",
+  "intent": {
+    "objective": "Generate a NotebookLM audio overview and downloadable file about climate policy tradeoffs",
+    "targetSubject": "climate policy",
+    "targetAudience": "policy analysts",
+    "deliverable": "NotebookLM audio overview and mp3 download",
+    "successCriteria": "audio captures key tradeoffs and references the provided sources",
+    "explorationAngles": [
+      "cost",
+      "equity",
+      "implementation"
+    ],
+    "constraints": {
+      "language": "en"
+    },
+    "mustInclude": [
+      "tradeoff analysis"
+    ],
+    "mustExclude": []
+  },
+  "openQuestions": []
+}

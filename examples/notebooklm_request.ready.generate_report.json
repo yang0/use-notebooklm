@@ -1,0 +1,28 @@
+﻿{
+  "contractVersion": "notebooklm_request_v1",
+  "status": "READY",
+  "request": {
+    "action": "generate-report",
+    "notebookTarget": {
+      "targetMode": "existing",
+      "notebookTitle": "Climate Policy Tradeoffs"
+    },
+    "input": {
+      "generationInstructions": "Generate a briefing-doc report highlighting policy options, tradeoffs, and recommendations for analysts."
+    },
+    "options": {
+      "language": "en",
+      "sourceReadinessMode": "require-all-ready",
+      "sourceIds": [
+        "src_001",
+        "src_007",
+        "src_014"
+      ]
+    },
+    "confirmation": {
+      "userConfirmed": true,
+      "userConfirmedLongRunning": true
+    }
+  },
+  "openQuestions": []
+}

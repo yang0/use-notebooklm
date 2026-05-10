@@ -1,0 +1,27 @@
+﻿{
+  "contractVersion": "notebooklm_request_v1",
+  "status": "READY",
+  "request": {
+    "action": "generate-audio",
+    "notebookTarget": {
+      "targetMode": "existing",
+      "notebookId": "abc123de-1111-2222-3333-444455556666"
+    },
+    "input": {
+      "generationInstructions": "Create a concise 8-10 minute overview focused on policy tradeoffs and implementation risks."
+    },
+    "options": {
+      "language": "en",
+      "sourceReadinessMode": "require-all-ready",
+      "sourceIds": [
+        "src_001",
+        "src_014"
+      ]
+    },
+    "confirmation": {
+      "userConfirmed": true,
+      "userConfirmedLongRunning": true
+    }
+  },
+  "openQuestions": []
+}

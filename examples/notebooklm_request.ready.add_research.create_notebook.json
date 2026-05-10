@@ -1,0 +1,23 @@
+﻿{
+  "contractVersion": "notebooklm_request_v1",
+  "status": "READY",
+  "request": {
+    "action": "add-research",
+    "notebookTarget": {
+      "targetMode": "create",
+      "createNotebookTitle": "椋庢按浜虹兢鍟嗗搧钃濇捣"
+    },
+    "input": {
+      "researchQuery": "涓浗澶ч檰杩?0澶?鍠滄椋庢按鍜岀巹瀛︾殑浜虹兢 鏈€杩戠粡甯告彁鍒板摢浜涘晢鍝?杩欎簺鍟嗗搧閲屽摢浜涙病鏈夊己鍔垮搧鐗?
+    },
+    "options": {
+      "language": "zh_Hans",
+      "sourceReadinessMode": "require-all-ready"
+    },
+    "confirmation": {
+      "userConfirmed": true,
+      "userConfirmedLongRunning": true
+    }
+  },
+  "openQuestions": []
+}

@@ -1,0 +1,18 @@
+﻿{
+  "contractVersion": "intent_contract_v1",
+  "status": "NEEDS_CLARIFICATION",
+  "intent": {
+    "objective": "Use NotebookLM to help with my climate policy materials",
+    "targetSubject": "climate policy",
+    "targetAudience": "policy analysts",
+    "deliverable": "NotebookLM output",
+    "successCriteria": "surface the strongest product or policy signals from the available materials",
+    "explorationAngles": [],
+    "constraints": {},
+    "mustInclude": [],
+    "mustExclude": []
+  },
+  "openQuestions": [
+    "浣犵涓€姝ユ洿鎯宠鎺㈢储寮忛棶绛旓紝杩樻槸鐩存帴鐢熸垚姝ｅ紡鎶ュ憡锛?
+  ]
+}

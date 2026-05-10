@@ -1,0 +1,25 @@
+﻿{
+  "contractVersion": "notebooklm_request_v1",
+  "status": "NEEDS_CLARIFICATION",
+  "request": {
+    "action": "ask",
+    "notebookTarget": {
+      "targetMode": "existing",
+      "notebookTitle": "椋庢按浜虹兢鍟嗗搧钃濇捣"
+    },
+    "input": {
+      "askPrompt": "鍝簺鍟嗗搧鏂瑰悜鏈€鍊煎緱浼樺厛楠岃瘉锛?
+    },
+    "options": {
+      "language": "zh_Hans",
+      "sourceReadinessMode": "allow-partial-ready"
+    },
+    "confirmation": {
+      "userConfirmed": false,
+      "userConfirmedLongRunning": false
+    }
+  },
+  "openQuestions": [
+    "浣犳洿鎯冲厛鎷?TOP10 钃濇捣娓呭崟锛岃繕鏄甫瀹㈠崟浠峰拰鎵撴硶鐨勬満浼氱煩闃碉紵"
+  ]
+}

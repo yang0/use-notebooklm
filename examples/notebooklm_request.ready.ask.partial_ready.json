@@ -1,0 +1,24 @@
+﻿{
+  "contractVersion": "notebooklm_request_v1",
+  "status": "READY",
+  "request": {
+    "action": "ask",
+    "notebookTarget": {
+      "targetMode": "existing",
+      "notebookTitle": "椋庢按浜虹兢鍟嗗搧钃濇捣"
+    },
+    "input": {
+      "askPrompt": "鍩轰簬鐩墠宸茬粡 ready 鐨勬潵婧愶紝鍏堢粰鎴戜竴鐗?TOP10 钃濇捣鍟嗗搧鏂瑰悜锛屽苟鏄庣‘璇存槑鍝簺鍒ゆ柇鍙兘杩樹細鍥犳湭瀹屾垚鏉ユ簮鑰屽彉鍖栥€?
+    },
+    "options": {
+      "language": "zh_Hans",
+      "sourceReadinessMode": "allow-partial-ready",
+      "sourceIds": [
+        "src_001",
+        "src_014"
+      ]
+    },
+    "confirmation": {}
+  },
+  "openQuestions": []
+}

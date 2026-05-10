@@ -1,0 +1,25 @@
+﻿{
+  "contractVersion": "notebooklm_request_v1",
+  "status": "READY",
+  "request": {
+    "action": "ask",
+    "notebookTarget": {
+      "targetMode": "existing",
+      "notebookId": "2172f553-0186-4077-9d0b-0333adde8fbe"
+    },
+    "input": {
+      "askPrompt": "鍩轰簬褰撳墠宸茬粡 ready 鐨勬潵婧愶紝鍏堢粰鎴戜竴鐗堝垵姝ヨ摑娴峰垽鏂紝骞舵槑纭摢浜涘垽鏂彲鑳藉洜浠嶅湪 processing 鐨勬潵婧愯€屽彉鍖栥€?
+    },
+    "options": {
+      "language": "zh_Hans",
+      "sourceReadinessMode": "allow-partial-ready",
+      "sourceIds": [
+        "054052bb-76b5-462e-887d-8577a17d5488",
+        "dcda8318-5df9-43a0-99dd-3c202c0ebddd",
+        "4fbc6993-813f-48cb-bcce-302f94aa3420"
+      ]
+    },
+    "confirmation": {}
+  },
+  "openQuestions": []
+}
