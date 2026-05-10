@@ -1,0 +1,10 @@
+{
+  "name": "use-notebooklm",
+  "version": "1.0.0",
+  "description": "Independent NotebookLM orchestration skill with self-contained CDP authentication",
+  "type": "module",
+  "scripts": {
+    "login": "python scripts/cdp_login.py --launch-chrome",
+    "validate": "bun scripts/validate_notebooklm_request.js"
+  }
+}
