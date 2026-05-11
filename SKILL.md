@@ -160,6 +160,27 @@ notebooklm status
 - 必须提供 `createNotebookTitle`
 - 不能再带 `notebookId` 或 `notebookTitle`
 
+## NotebookLM 核心约束
+
+### Source 数量上限
+
+**单 notebook 最多容纳 30 条 source**（URL、PDF 混合计入）。
+
+这意味着：
+- 无法一次性导入大量 source 后逐轮挖掘
+- 必须策略性地管理 source：先放索引/大纲类 source，获取整体结构后，再根据反思替换或补充关键章节的 source
+- 当需要深入特定章节时，可能需要移除已充分挖掘的 source，为新 source 腾出空间
+
+### 返回长度限制
+
+NotebookLM 每次返回的文本量有限（通常几百到几千字）。**不能一次性要求获取全部内容**。
+
+必须采用渐进式策略：
+- 先获取索引/大纲（低 source 消耗）
+- 基于返回内容反思，识别遗漏和重点
+- 再决定下一轮要深入哪些部分
+- 每轮只聚焦一个主题或章节
+
 ## source readiness 规则
 
 `request.options.sourceReadinessMode` 只允许两种：
@@ -352,36 +373,81 @@ notebooklm status
 - `ask` 在 `allow-partial-ready` 下可以基于 ready 子集继续
 - `generate-*` 和 `download` 必须等待必需 source 全部 ready
 
-## 渐进式挖掘策略（当目标是非结构化内容提取时）
+## 渐进式信息获取策略（核心工作流）
 
-NotebookLM 每次返回的文本量有限（通常几百到几千字）。当用户需要从视频/文档中提取结构化深度内容时，**不要一次性要求全部内容**，而是采用渐进式多轮提问：
+### 为什么必须是渐进式
 
-> **⚠️ 已知限制**：NotebookLM 对中文回答的编码支持不稳定，可能出现乱码。建议挖掘阶段用**英文提问**（NotebookLM 对英文处理更稳定），最终汇总输出时由编排层翻译成中文。
+NotebookLM 有两项硬约束决定了不能"一开始就规划好要获取什么"：
 
-### 核心理念
+1. **Source 上限**：单 notebook 最多 30 条 source（URL/PDF 混合计入）
+2. **返回长度限制**：每次返回通常只有几百到几千字
 
-每轮提问基于前一轮结果的**反思**，而非预先规划所有问题。作为编排者，你要：
+这意味着：
+- ❌ 不能一次性导入所有 source 然后批量提取
+- ❌ 不能预先规划 10 个问题然后依次执行（因为前 3 个问题的回答可能完全改变你对"重点在哪里"的判断）
+- ✅ 必须是"**获取 → 反思 → 决定下一步**"的循环
 
-1. **阅读上一轮 NotebookLM 的返回**
-2. **判断覆盖了哪些、遗漏了哪些**
-3. **据此精炼下一轮的问题**，使其更聚焦、更具体
+### 核心理念：反思驱动，非计划驱动
 
-### 典型多轮挖掘流程
+**错误的思路**："我先问大纲，再问第一章，再问第二章..."（这是预先规划）
 
-以从 YouTube 视频提取多章节教程为例：
+**正确的思路**：
+1. **获取索引**：先获取整体结构（消耗少量 source slot）
+2. **反思**：阅读返回内容，判断"哪些部分值得深入？哪些只是过渡？"
+3. **决策**：根据反思结果，决定下一步要获取哪类信息
+4. **执行**：可能涉及替换 source（移除已充分挖掘的，添加新 source）
+5. **循环**：回到步骤 2
+
+> **关键**：每一轮的问题都基于前一轮结果的**反思**，而非预先写好的脚本。
+
+### Source 管理策略
+
+由于 30 条上限，必须主动管理 source：
+
+| 阶段 | 策略 | Source 数量 |
+|------|------|-------------|
+| **索引阶段** | 只放核心 source（如 1 个视频、2-3 个关键文档） | 1-5 条 |
+| **深入阶段** | 保留必要上下文 source，替换已挖透的 source | 动态调整 |
+| **验证阶段** | 用最小 source 集合验证关键结论 | 精简 |
+
+**Source 替换原则**：
+- 当某个 source 的内容已被充分提取，可以移除为新 source 腾位置
+- 保留跨章节引用的核心 source（如主视频）
+- 添加新 source 前先检查当前数量，必要时先移除
+
+### 典型渐进式流程（以深度内容提取为例）
 
 ```
-Round 1: 获取整体结构
-  "Break down this video into a chapter outline. List main topics."
-  → 拿到大纲后，识别哪些章节需要深入
+Phase 1: 索引构建
+  导入核心 source（如主视频）
+  Ask: "Break down this into a chapter outline. What are the main topics?"
+  → 保存为 index.md
+  → 反思：哪些章节是重点？哪些只是过渡？
 
-Round 2-8: 逐章节深入（每轮一个主题）
-  "Extract the section about [X]. Cover: (1) ... (2) ... Write as tutorial."
-  → 基于前一轮未覆盖的细节，精炼下一轮 prompt
+Phase 2: 选择性深入（基于反思）
+  根据索引判断："Chapter 3 看起来是核心方法论"
+  Ask: "Extract Chapter 3 in detail. Cover: (1) core concept, (2) step-by-step process, (3) examples."
+  → 保存为 chapter-03.md
+  → 反思：是否遗漏了关键细节？是否需要补充前置知识？
 
-Final: 补充遗漏
-  "What else was covered that we haven't extracted yet?"
+Phase 3: 补充或修正（基于新的反思）
+  "What important details about [X] were mentioned earlier but not covered in the last response?"
+  或："The explanation of [Y] seems incomplete. What else was said about it?"
+  → 追加到对应章节文件
+
+Phase 4: 跨 source 关联（如需要）
+  当涉及多个 source 时，先问："How does Source A relate to Source B on topic [Z]?"
+  → 保存为 connections.md
 ```
+
+### 每轮必须执行的反思清单
+
+看完 NotebookLM 的返回后，必须回答：
+- [ ] 这次返回覆盖了哪些内容？
+- [ ] 哪些重要内容明显被省略或简化了？
+- [ ] 是否有概念需要前置解释才能理解？
+- [ ] 下一步最值得深入的是哪个部分？
+- [ ] 当前 source 是否还有未挖掘的内容，还是需要换 source？
 
 ### 提问技巧
 
@@ -392,18 +458,29 @@ Final: 补充遗漏
 | **给出具体方向** | "Cover: (1) definition, (2) example, (3) code" 比 "explain X" 好 |
 | **基于遗漏反思** | 看完结果再问 "what else was covered about Y that we missed?" |
 | **先粗后细** | Round 1 大纲 → Round N 细节，不要在 Round 1 就追问太细 |
+| **动态调整** | 根据返回随时改变下一步计划，不要坚持预设路径 |
 
-### 产出物组织
+### 产出物组织（多文件结构）
 
-多轮挖掘的最终产物应组织为：
+**必须保存为多文件**，而非单一大文件：
+
 ```
 {output-dir}/
-├── README.md          # 教程索引，含目录和关键概念速览
-└── chapters/
-    ├── ch01-xxx.md    # 每章一个 markdown 文件
-    ├── ch02-xxx.md
-    └── ...
+├── index.md              # 索引文件：目录结构、关键概念速览、source 清单
+├── chapters/
+│   ├── ch01-xxx.md       # 每章/每主题一个独立文件
+│   ├── ch02-xxx.md
+│   └── ...
+└── meta/
+    └── reflection-log.md # 反思记录：每轮获取的决策理由
 ```
+
+**文件职责**：
+- `index.md`：全局索引，方便快速定位
+- `chapters/*.md`：分主题存储，单个文件不宜过长（便于 NotebookLM 后续引用）
+- `meta/reflection-log.md`：记录每轮"为什么问这个问题"的决策过程，便于追溯
+
+> **⚠️ 已知限制**：NotebookLM 对中文回答的编码支持不稳定，可能出现乱码。建议挖掘阶段用**英文提问**（NotebookLM 对英文处理更稳定），最终汇总输出时由编排层翻译成中文。
 
 ## 失败处理
 
@@ -474,5 +551,8 @@ Final: 补充遗漏
 - exploratory `ask` 允许基于 ready 子集继续
 - 生成和下载必须等必需 source 全部 ready
 - 执行目标是让用户真正拿到结果，而不是只启动命令
-- **内容挖掘采用渐进式**：先粗后细，每轮基于前一轮反思精炼问题
+- **内容挖掘采用渐进式**：获取 → 反思 → 决定下一步，非预先规划
+- **Source 管理意识**：始终注意 30 条上限，主动替换已挖透的 source
+- **多文件输出**：索引 + 分章节文件 + 反思日志，禁止单一大文件
+- **反思驱动**：每轮必须基于前一轮结果反思后再决定下一步，不要坚持预设路径
 - **Auth 故障不立即宣告失败**：先尝试 CDP 刷新、Chrome 重连等既定恢复路径
